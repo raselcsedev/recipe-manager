@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { fetchRecipe, Recipe, addFavorite, removeFavorite } from '../api/api';
+import { useNavigate, useParams } from 'react-router-dom';
+import { fetchRecipe, RecipeDetail, addFavorite, removeFavorite, deleteRecipe } from '../api/api';
+import { useAuth } from '../hooks/useAuth';
 
 const RecipeDetailPage = () => {
   const { id } = useParams();
-  const [recipe, setRecipe] = useState<Recipe | null>(null);
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [recipe, setRecipe] = useState<RecipeDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -33,15 +36,40 @@ const RecipeDetailPage = () => {
     }
   };
 
+  const handleDelete = async () => {
+    if (!window.confirm('Delete this recipe?')) return;
+    try {
+      await deleteRecipe(recipe.id);
+      navigate('/');
+    } catch (err: any) {
+      setError(err?.response?.data?.message || 'Unable to delete recipe');
+    }
+  };
+
   return (
     <div className="card">
-      <h2>{recipe.title}</h2>
-      <button onClick={toggleFavorite} className={recipe.isFavorited ? 'secondary' : undefined}>
-        {recipe.isFavorited ? 'Remove Favorite' : 'Add Favorite'}
-      </button>
+      <div className="detail-header">
+        <h2>{recipe.title}</h2>
+        <div className="button-row">
+          <button onClick={toggleFavorite} className={recipe.isFavorited ? 'secondary' : undefined}>
+            {recipe.isFavorited ? 'Remove Favorite' : 'Add Favorite'}
+          </button>
+          {user?.id === recipe.userId && (
+            <>
+              <button onClick={() => navigate(`/recipes/${recipe.id}/edit`)}>Edit</button>
+              <button onClick={handleDelete} className="secondary">
+                Delete
+              </button>
+            </>
+          )}
+        </div>
+      </div>
       <p>{recipe.description}</p>
       <p>
         <strong>Category:</strong> {recipe.category.name}
+      </p>
+      <p>
+        <strong>Owner:</strong> {recipe.ownerName}
       </p>
       <section>
         <h3>Ingredients</h3>

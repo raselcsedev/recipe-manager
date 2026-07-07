@@ -18,6 +18,20 @@ button {
   cursor: pointer;
 }
 
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.button-row {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
 .app-shell {
   max-width: 1080px;
   margin: 0 auto;

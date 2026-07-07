@@ -34,6 +34,11 @@ export type Recipe = {
   isFavorited: boolean;
 };
 
+export type RecipeDetail = Recipe & {
+  userId: string;
+  ownerName: string;
+};
+
 export type DashboardCounts = {
   totalRecipes: number;
   totalCategories: number;

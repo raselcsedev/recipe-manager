@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 import { loginUser, registerUser, logoutUser, refreshToken, fetchProfile, setAccessToken } from '../api/api';
 
 interface UserState {
+  id: string;
   name: string;
   email: string;
 }
