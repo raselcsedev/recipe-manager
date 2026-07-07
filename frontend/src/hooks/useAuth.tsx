@@ -9,6 +9,7 @@ interface UserState {
 
 interface AuthContextValue {
   user: UserState | null;
+  loading: boolean;
   login: (data: { email: string; password: string }) => Promise<void>;
   register: (data: { name: string; email: string; password: string }) => Promise<void>;
   logout: () => Promise<void>;
@@ -16,8 +17,9 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<UserState | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const storedUser = window.localStorage.getItem('recipe-user');
@@ -26,6 +28,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (storedUser && storedToken) {
       setUser(JSON.parse(storedUser));
       setAccessToken(storedToken);
+      setLoading(false);
       return;
     }
 
@@ -45,7 +48,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           window.localStorage.removeItem('recipe-user');
           window.localStorage.removeItem('recipe-token');
           setUser(null);
-        });
+        })
+        .finally(() => setLoading(false));
+    } else {
+      setLoading(false);
     }
   }, []);
 
@@ -77,7 +83,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setAccessToken(null);
   };
 
-  return <AuthContext.Provider value={{ user, login, register, logout }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user, loading, login, register, logout }}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {

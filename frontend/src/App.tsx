@@ -14,9 +14,9 @@ function App() {
   return (
     <Layout>
       <Routes>
-        <Route path="/" element={<RecipeListPage />} />
+        <Route path="/" element={<AuthRoute><RecipeListPage /></AuthRoute>} />
         <Route path="/login" element={<AuthPage />} />
-        <Route path="/recipes/:id" element={<RecipeDetailPage />} />
+        <Route path="/recipes/:id" element={<AuthRoute><RecipeDetailPage /></AuthRoute>} />
         <Route path="/recipes/:id/edit" element={<AuthRoute><EditRecipePage /></AuthRoute>} />
         <Route path="/create" element={<AuthRoute><CreateRecipePage /></AuthRoute>} />
         <Route path="/favorites" element={<AuthRoute><FavoritesPage /></AuthRoute>} />
